@@ -1,12 +1,8 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_app/dio_apis/api_const.dart';
 import '../database_drift/database.dart';
-import '../models/credits_model.dart';
 import '../models/movie_detail_model.dart';
 import '../utilities/color_values.dart';
 import '../utilities/pixels.dart';
@@ -22,9 +18,7 @@ class MovieDetailScreen extends StatelessWidget {
   Stream<Movie> _watchFavMovieInDb(int serverId) {
     return Utility.database.watchMovieByIdInDb(serverId);
   }
-  // Stream<List<Movie>?> _watchFavMoviesInDb() {
-  //   return Utility.database.watchMoviesInDb();
-  // }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -41,14 +35,12 @@ class MovieDetailScreen extends StatelessWidget {
                     AsyncSnapshot<dynamic> snapshot,
                     ) {
                   if (snapshot.hasData) {
-                    log("$TAG : ///////////////// Has data");
                     if (snapshot.data != null) {
                       return  ReusableWidgets.childButtonWidget(child: const Icon(Icons.favorite, color: ColorValues.mainColor,),
                           onButtonPress: (){
                             Utility.database.removeFromFavourite(movie.serverId ?? 0);
                           }, bgColor: ColorValues.whiteColor);
                     }
-                    log("$TAG: Movie from DB is null");
                     return ReusableWidgets.childButtonWidget(child: const Icon(Icons.favorite_border, color: ColorValues.mainColor,),
                         onButtonPress: (){
                           Utility.database.insertMovie(movie.toCompanion(true));
@@ -65,7 +57,7 @@ class MovieDetailScreen extends StatelessWidget {
           body: Padding(
             padding: const EdgeInsets.only(left: Pixels.screenPadding, right: Pixels.screenPadding),
             child: FutureBuilder<MovieDetailModel?>(
-                future: fetchMovieDetail(movieId: movie.serverId ?? 0),
+                future: Utility.apisRepo.fetchMovieDetail(movieId: movie.serverId ?? 0),
                 builder: (ctx, AsyncSnapshot<MovieDetailModel?> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError) {
@@ -77,9 +69,6 @@ class MovieDetailScreen extends StatelessWidget {
                       );
                     } else if (snapshot.hasData) {
                       MovieDetailModel? movieDetailModel = snapshot.data;
-                      // if (movies != null) {
-                      // }
-                      // log("$TAG Received from fetchConnections $confirmedConnections");
                       return ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         shrinkWrap: true,
@@ -98,6 +87,7 @@ class MovieDetailScreen extends StatelessWidget {
                                     child: CachedNetworkImage(
                                       imageUrl: "${ApiConst.imageBaseUrl}${movieDetailModel?.posterPath ?? ""}",
                                       fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined, size: 40),
                                     ),
                                   ),
                                 ),
@@ -198,31 +188,5 @@ class MovieDetailScreen extends StatelessWidget {
       },
     );
   }
-
-  Future<MovieDetailModel?> fetchMovieDetail({required int movieId}) async{
-    try{
-      var it = await Utility.retrofitClient.fetchMovieDetail(movieId: movieId);
-      log("$TAG fetchMovieDetail: Here is \n ${it['success']}}");
-      MovieDetailModel movieDetailModel = MovieDetailModel.fromJson(it['data']);
-      CreditsModel creditsModel = CreditsModel.fromJson(it['credits']);
-      movieDetailModel.credits = creditsModel;
-
-      // var movieList = list.map( (e) => Movie.fromJson(e)).toList(growable: false);
-      log("$TAG fetchMovieDetail: Here is movieList \n $movieDetailModel");
-
-      return movieDetailModel;
-    }catch (obj) {
-      log("$TAG: fetchMovieDetail: In catchError ${obj.toString()}");
-      log("$TAG: fetchMovieDetail: In catchError 2 ${obj.printError}");
-      switch (obj.runtimeType) {
-        case DioException:
-          final res = (obj as DioException).response;
-          log("$TAG: fetchMovieDetail: Status Message: ${res?.statusMessage} Code: ${res?.statusCode} Data: ${res?.data} Extras: ${res?.extra}");
-          break;
-      }
-      return null;
-    }
-  }
-
 
 }

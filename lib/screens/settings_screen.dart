@@ -10,7 +10,7 @@ import 'package:drift/drift.dart' as dr;
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key? key}) : super(key: key);
   final TAG = "SettingsScreen";
-  // String? gender;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(

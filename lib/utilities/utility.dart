@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import '../bottom_nav-bar/bottom_nav_bar_controller.dart';
+import '../bottom_nav_bar/bottom_nav_bar_controller.dart';
 import '../database_drift/database.dart';
 import '../dio_apis/api_client.dart';
+import '../dio_apis/api_repo.dart';
 
 
 class Utility {
@@ -13,6 +14,8 @@ class Utility {
   static BtmNavBarController btmNavBarController = Get.put(BtmNavBarController());
   static AppDatabase database = AppDatabase();
   static final retrofitClient = ApiClient(Dio(BaseOptions(contentType: "application/json")));
+  static ApisRepo apisRepo = ApisRepo();
+
 
   static Future<bool> hasNetwork() async {
     try {

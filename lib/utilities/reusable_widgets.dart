@@ -11,7 +11,6 @@ import 'pixels.dart';
 class ReusableWidgets {
   static String TAG = "ReusableWidgets";
 
-  // Text("Welcome to LTSoccer\nYou are Coach or Athlete"),
   static Widget textWidget(
       {required String text,
       required Color textColor,
@@ -104,7 +103,6 @@ class ReusableWidgets {
       {required Function onButtonPress,
       required Widget child,
       ButtonStyle? style,
-      // required OutlinedBorder shape,
       required Color bgColor}) {
     return Center(
       child: ElevatedButton(
@@ -112,7 +110,6 @@ class ReusableWidgets {
             ? ElevatedButton.styleFrom(
                 backgroundColor: bgColor,
                 foregroundColor: bgColor,
-                // shape: shape,
                 shadowColor: ColorValues.transparent,
                 minimumSize: Size.zero,
                 padding: EdgeInsets.zero,

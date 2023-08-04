@@ -68,7 +68,7 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-    //INSERT USER IFO IN DB
+    //INSERT INTO DB
     Future<int> insertMovie(MoviesCompanion moviesCompanion) async {
       return await into(movies).insert(moviesCompanion);
     }
@@ -85,7 +85,7 @@ class AppDatabase extends _$AppDatabase {
     }
 
 
-    //INSERT USER IFO IN DB
+    //INSERT INTO DB
     Future<int> insertSortPreference(SortPreferencesCompanion sortPreference) async {
       return await into(sortPreferences).insert(sortPreference);
     }
@@ -93,7 +93,7 @@ class AppDatabase extends _$AppDatabase {
     Future<int> deleteSortPreferences() async {
       return await delete(sortPreferences).go();
     }
-    //INSERT USER IFO IN DB
+    //INSERT INTO DB
     Future<List<SortPreference>> fetchSortPreference() async {
       return await select(sortPreferences).get();
     }
